@@ -2,5 +2,6 @@
 A Tiny Renderer in Python
 
 
-## Stage 0:
+## Rendering Progression:
 ![one-red-pixel](images/home.png)
+![first-line](images/1_0.png)
