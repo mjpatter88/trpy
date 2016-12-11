@@ -1,4 +1,5 @@
 from PIL import Image
+from model import Model
 
 
 def transpose(point):
@@ -9,6 +10,8 @@ def draw_point(image, point, color):
     image.putpixel(new_point, color)
 
 def draw_line(image, start, end, color):
+    start = int(start[0]), int(start[1])
+    end = int(end[0]), int(end[1])
     steep = False;
     if abs(start[0] - end[0]) < abs(start[1] - end[1]):
         steep = True
@@ -23,20 +26,28 @@ def draw_line(image, start, end, color):
     x1, y1 = end
     for x in range(x0, x1):
         step = (x-x0)/(x1-x0)
-        y = y0*(1-step) + y1*step
+        y = int(y0*(1-step) + y1*step)
         if steep:
             x, y = transpose((x,y))
         draw_point(image, (x,y), color)
 
+def draw_triangle(image, points, color):
+    draw_line(image, points[0], points[1], color)
+    draw_line(image, points[1], points[2], color)
+    draw_line(image, points[0], points[2], color)
 
-image = Image.new('RGB', (100, 100))
+if __name__ == '__main__':
+    model_file = 'models/african_head.obj'
+    width = 500
+    height = 500
+    color = (255, 255, 255)
+    out_file_name = 'render.png'
 
-draw_line(image, (13,20), (80,40), (255, 255, 255))
-draw_line(image, (20,13), (40,80), (255, 0, 0))
-draw_line(image, (80,40), (13,20), (255, 0, 0))
-draw_line(image, (20,80), (40,20), (255, 0, 0))
+    image = Image.new('RGB', (width, height))
+    model = Model(model_file, width, height)
 
-image = image.transpose(Image.FLIP_TOP_BOTTOM)
-image.save('test.png')
+    for face in model.get_faces():
+        draw_triangle(image, face, color)
 
-
+    image = image.transpose(Image.FLIP_TOP_BOTTOM)
+    image.save(out_file_name)
