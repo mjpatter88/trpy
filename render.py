@@ -1,3 +1,4 @@
+import sys
 from PIL import Image
 from model import Model
 
@@ -42,6 +43,12 @@ if __name__ == '__main__':
     height = 500
     color = (255, 255, 255)
     out_file_name = 'render.png'
+
+    if len(sys.argv) > 1:
+        model_file = sys.argv[1]
+    if len(sys.argv) > 3:
+        width = int(sys.argv[2])
+        height = int(sys.argv[3])
 
     image = Image.new('RGB', (width, height))
     model = Model(model_file, width, height)
