@@ -37,7 +37,7 @@ def draw_triangle(image, points, color):
     draw_line(image, points[1], points[2], color)
     draw_line(image, points[0], points[2], color)
 
-if __name__ == '__main__':
+def draw_model_wireframe():
     model_file = 'models/african_head.obj'
     width = 500
     height = 500
@@ -55,6 +55,24 @@ if __name__ == '__main__':
 
     for face in model.get_faces():
         draw_triangle(image, face, color)
+
+    image = image.transpose(Image.FLIP_TOP_BOTTOM)
+    image.save(out_file_name)
+
+
+if __name__ == '__main__':
+    width = 200
+    height = 200
+    white = (255, 255, 255)
+    red = (255, 0, 0)
+    green = (0, 255, 0)
+    out_file_name = 'out_render.png'
+
+    image = Image.new('RGB', (width, height))
+
+    draw_triangle(image, ((10, 70), (50, 160), (70, 80)), red)
+    draw_triangle(image, ((180, 50), (150, 1), (70, 180)), white)
+    draw_triangle(image, ((180, 150), (120, 160), (130, 180)), green)
 
     image = image.transpose(Image.FLIP_TOP_BOTTOM)
     image.save(out_file_name)
