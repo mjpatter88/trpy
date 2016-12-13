@@ -11,10 +11,14 @@ A Tiny Renderer in Python
 ![third-lines](images/1_2.png)
 ![fourth-lines](images/1_3.png)
 
-### Wireframes
+### Line Wireframes
 ![wireframe](images/1_4.png)
 ![wireframe-2](images/1_5.png)
 
 ### Triangles
 ![triangles](images/2_0.png)
 ![filled-triangles](images/2_1.png)
+
+### Triangle Wireframes
+![tri-wireframe](images/2_2.png)
+![tri-wireframe-2](images/2_3.png)

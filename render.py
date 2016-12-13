@@ -1,4 +1,5 @@
 import sys
+import random
 from PIL import Image
 from model import Model
 
@@ -71,7 +72,7 @@ def draw_model_wireframe():
     width = 500
     height = 500
     color = (255, 255, 255)
-    out_file_name = 'render.png'
+    out_file_name = 'out_render.png'
 
     if len(sys.argv) > 1:
         model_file = sys.argv[1]
@@ -83,25 +84,28 @@ def draw_model_wireframe():
     model = Model(model_file, width, height)
 
     for face in model.get_faces():
-        draw_triangle(image, face, color)
+        color = (int(random.random()*255), int(random.random()*255), int(random.random()*255))
+        fill_triangle(image, face, color)
 
     image = image.transpose(Image.FLIP_TOP_BOTTOM)
     image.save(out_file_name)
 
 
 if __name__ == '__main__':
-    width = 200
-    height = 200
-    white = (255, 255, 255)
-    red = (255, 0, 0)
-    green = (0, 255, 0)
-    out_file_name = 'out_render.png'
+    draw_model_wireframe()
 
-    image = Image.new('RGB', (width, height))
+    #width = 200
+    #height = 200
+    #white = (255, 255, 255)
+    #red = (255, 0, 0)
+    #green = (0, 255, 0)
+    #out_file_name = 'out_render.png'
 
-    fill_triangle(image, ((10, 70), (50, 160), (70, 80)), red)
-    fill_triangle(image, ((180, 50), (150, 1), (70, 180)), white)
-    fill_triangle(image, ((180, 150), (120, 160), (130, 180)), green)
+    #image = Image.new('RGB', (width, height))
 
-    image = image.transpose(Image.FLIP_TOP_BOTTOM)
-    image.save(out_file_name)
+    #fill_triangle(image, ((10, 70), (50, 160), (70, 80)), red)
+    #fill_triangle(image, ((180, 50), (150, 1), (70, 180)), white)
+    #fill_triangle(image, ((180, 150), (120, 160), (130, 180)), green)
+
+    #image = image.transpose(Image.FLIP_TOP_BOTTOM)
+    #image.save(out_file_name)
