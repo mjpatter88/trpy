@@ -10,7 +10,8 @@ def draw_point(image, point, color):
     new_point = int(point[0]), int(point[1])
     image.putpixel(new_point, color)
 
-def draw_line(image, start, end, color):
+def line_to_pixels(start, end):
+    pixels = []
     start = int(start[0]), int(start[1])
     end = int(end[0]), int(end[1])
     steep = False;
@@ -30,12 +31,40 @@ def draw_line(image, start, end, color):
         y = int(y0*(1-step) + y1*step)
         if steep:
             x, y = transpose((x,y))
-        draw_point(image, (x,y), color)
+        pixels.append((x,y))
+    return pixels
+
+def draw_line(image, start, end, color):
+    for pixel in line_to_pixels(start, end):
+        draw_point(image, pixel, color)
+
+def draw_hor_line(image, start, end, color):
+    x1 = min(start[0], end[0])
+    x2 = max(start[0], end[0])
+    for x in range(x1, x2):
+        draw_point(image, (x, start[1]), color)
+
+def draw_between_sides(image, side_1, side_2, color):
+    side_1 = {point[1]:point[0] for point in side_1}
+    side_2 = {point[1]:point[0] for point in side_2}
+    for y in side_1:
+        if y in side_2:
+            draw_hor_line(image, (side_1[y], y), (side_2[y], y), color)
 
 def draw_triangle(image, points, color):
     draw_line(image, points[0], points[1], color)
     draw_line(image, points[1], points[2], color)
     draw_line(image, points[0], points[2], color)
+
+def fill_triangle(image, points, color):
+    side_1 = line_to_pixels(points[0], points[1])
+    side_2 = line_to_pixels(points[1], points[2])
+    side_3 = line_to_pixels(points[0], points[2])
+
+    draw_between_sides(image, side_1, side_2, color)
+    draw_between_sides(image, side_2, side_3, color)
+    draw_between_sides(image, side_1, side_3, color)
+
 
 def draw_model_wireframe():
     model_file = 'models/african_head.obj'
@@ -70,9 +99,9 @@ if __name__ == '__main__':
 
     image = Image.new('RGB', (width, height))
 
-    draw_triangle(image, ((10, 70), (50, 160), (70, 80)), red)
-    draw_triangle(image, ((180, 50), (150, 1), (70, 180)), white)
-    draw_triangle(image, ((180, 150), (120, 160), (130, 180)), green)
+    fill_triangle(image, ((10, 70), (50, 160), (70, 80)), red)
+    fill_triangle(image, ((180, 50), (150, 1), (70, 180)), white)
+    fill_triangle(image, ((180, 150), (120, 160), (130, 180)), green)
 
     image = image.transpose(Image.FLIP_TOP_BOTTOM)
     image.save(out_file_name)

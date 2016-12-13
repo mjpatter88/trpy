@@ -17,3 +17,4 @@ A Tiny Renderer in Python
 
 ### Triangles
 ![triangles](images/2_0.png)
+![filled-triangles](images/2_1.png)
