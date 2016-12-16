@@ -90,22 +90,17 @@ def draw_model_wireframe():
     image = image.transpose(Image.FLIP_TOP_BOTTOM)
     image.save(out_file_name)
 
+def foo():
+    import itertools
+    im = Image.new('RGB', (255,255), "black")
+    pixels = im.load()
+
+    for x,y in itertools.product(range(im.height), range(im.width)):
+        pixels[x, y] = (255,255,255)
+    im.save('test_out.png')
+
 
 if __name__ == '__main__':
     draw_model_wireframe()
 
-    #width = 200
-    #height = 200
-    #white = (255, 255, 255)
-    #red = (255, 0, 0)
-    #green = (0, 255, 0)
-    #out_file_name = 'out_render.png'
 
-    #image = Image.new('RGB', (width, height))
-
-    #fill_triangle(image, ((10, 70), (50, 160), (70, 80)), red)
-    #fill_triangle(image, ((180, 50), (150, 1), (70, 180)), white)
-    #fill_triangle(image, ((180, 150), (120, 160), (130, 180)), green)
-
-    #image = image.transpose(Image.FLIP_TOP_BOTTOM)
-    #image.save(out_file_name)
