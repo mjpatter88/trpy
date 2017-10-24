@@ -1,3 +1,4 @@
+import math
 import sys
 import random
 from PIL import Image
@@ -66,6 +67,41 @@ def fill_triangle(image, points, color):
     draw_between_sides(image, side_2, side_3, color)
     draw_between_sides(image, side_1, side_3, color)
 
+"""
+Do a basic matrix cross product
+"""
+def get_face_normal(face):
+    p1 = face[0]
+    p2 = face[1]
+    p3 = face[2]
+    side1 = (p2[0]-p1[0], p2[1]-p1[1], p2[2]-p1[2])
+    side2 = (p3[0]-p2[0], p3[1]-p2[1], p3[2]-p2[2])
+
+    x_index = 0
+    y_index = 1
+    z_index = 2
+    x = side1[y_index]*side2[z_index] - side1[z_index]*side2[y_index]
+    y = side1[z_index]*side2[x_index] - side1[x_index]*side2[z_index]
+    z = side1[x_index]*side2[y_index] - side1[y_index]*side2[x_index]
+
+    return (x, y, z)
+
+def normalize(n):
+    fact = math.sqrt(n[0]*n[0] + n[1]*n[1] + n[2]*n[2])
+    return (n[0]/fact, n[1]/fact, n[2]/fact)
+
+"""
+The intensity of illumination is equal to the scalar product of the light vector and the normal
+to the given triangle
+"""
+def get_face_intensity(face):
+    light_vec = [0, 0, 1]
+    n = get_face_normal(face)
+    n = normalize(n)
+    return n[0]*light_vec[0] + n[1]*light_vec[1] + n[2]*light_vec[2]
+
+def world_to_screen(face, width, height):
+    return [((vert[0] + 1) * (width/2), (vert[1] + 1) * (height/2)) for vert in face]
 
 def draw_model_wireframe():
     model_file = 'models/african_head.obj'
@@ -84,8 +120,13 @@ def draw_model_wireframe():
     model = Model(model_file, width, height)
 
     for face in model.get_faces():
-        color = (int(random.random()*255), int(random.random()*255), int(random.random()*255))
-        fill_triangle(image, face, color)
+        intensity = get_face_intensity(face)
+
+        screen_face = world_to_screen(face, width, height)
+        # If intensity < 0, polygon is not visible (roughly speaking)
+        if intensity > 0:
+            color = (int(intensity*255), int(intensity*255), int(intensity*255))
+            fill_triangle(image, screen_face, color)
 
     image = image.transpose(Image.FLIP_TOP_BOTTOM)
     image.save(out_file_name)
@@ -94,18 +135,3 @@ def draw_model_wireframe():
 if __name__ == '__main__':
     draw_model_wireframe()
 
-    #width = 200
-    #height = 200
-    #white = (255, 255, 255)
-    #red = (255, 0, 0)
-    #green = (0, 255, 0)
-    #out_file_name = 'out_render.png'
-
-    #image = Image.new('RGB', (width, height))
-
-    #fill_triangle(image, ((10, 70), (50, 160), (70, 80)), red)
-    #fill_triangle(image, ((180, 50), (150, 1), (70, 180)), white)
-    #fill_triangle(image, ((180, 150), (120, 160), (130, 180)), green)
-
-    #image = image.transpose(Image.FLIP_TOP_BOTTOM)
-    #image.save(out_file_name)

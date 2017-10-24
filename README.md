@@ -22,3 +22,6 @@ A Tiny Renderer in Python
 ### Triangle Wireframes
 ![tri-wireframe](images/2_2.png)
 ![tri-wireframe-2](images/2_3.png)
+
+### Basic Lighting
+![basic-lighting](images/2_4.png)

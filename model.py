@@ -11,7 +11,7 @@ class Model():
             for line in f:
                 if line.startswith('v '):
                     items = line.split(' ')
-                    self.verts.append([float(items[1]), float(items[2])])
+                    self.verts.append([float(items[1]), float(items[2]), float(items[3])])
                 elif line.startswith('f '):
                     item_set = line.split(' ')
                     face = []
@@ -22,17 +22,6 @@ class Model():
 
         print("{} vertices.".format(len(self.verts)))
         print("{} faces.".format(len(self.faces)))
-        
-        x = max(abs(vert[0]) for vert in self.verts)
-        y = max(abs(vert[1]) for vert in self.verts)
-        biggest = max((x, y))
-        scale_x = width / biggest
-        scale_y = height / biggest
-        
-        for vert in self.verts:
-            vert[0] = (vert[0] + biggest) * (scale_x / 2)
-            vert[1] = (vert[1] + biggest) * (scale_y / 2)
-
         
 
     def get_faces(self):
