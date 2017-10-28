@@ -4,18 +4,22 @@ import random
 from PIL import Image
 from model import Model
 
+WIDTH = 800
+HEIGHT = 800
 
 def transpose(point):
     return point[1], point[0]
 
 def draw_point(image, point, color):
-    new_point = int(point[0]), int(point[1])
+    x = min(int(point[0]), WIDTH-1)
+    y = min(int(point[1]), HEIGHT-1)
+    new_point = x, y
     image.putpixel(new_point, color)
 
 def line_to_pixels(start, end):
     pixels = []
-    start = int(start[0]), int(start[1])
-    end = int(end[0]), int(end[1])
+    start = round((start[0])), round((start[1]))
+    end = round((end[0])), round((end[1]))
     steep = False;
     if abs(start[0] - end[0]) < abs(start[1] - end[1]):
         steep = True
@@ -28,12 +32,16 @@ def line_to_pixels(start, end):
 
     x0, y0 = start
     x1, y1 = end
-    for x in range(x0, x1):
-        step = (x-x0)/(x1-x0)
-        y = int(y0*(1-step) + y1*step)
-        if steep:
-            x, y = transpose((x,y))
-        pixels.append((x,y))
+    # If line starts and stops on the same point, just return that point
+    if x0 == x1:
+        pixels.append((x0,y0))
+    else:
+        for x in range(x0, x1+1):
+            step = (x-x0)/(x1-x0)
+            y = round((y0*(1-step) + y1*step))
+            if steep:
+                x, y = transpose((x,y))
+            pixels.append((x,y))
     return pixels
 
 def draw_line(image, start, end, color):
@@ -105,16 +113,13 @@ def world_to_screen(face, width, height):
 
 def draw_model_wireframe():
     model_file = 'models/african_head.obj'
-    width = 500
-    height = 500
+    width = WIDTH
+    height = HEIGHT
     color = (255, 255, 255)
     out_file_name = 'out_render.png'
 
     if len(sys.argv) > 1:
         model_file = sys.argv[1]
-    if len(sys.argv) > 3:
-        width = int(sys.argv[2])
-        height = int(sys.argv[3])
 
     image = Image.new('RGB', (width, height))
     model = Model(model_file, width, height)
@@ -127,6 +132,7 @@ def draw_model_wireframe():
         if intensity > 0:
             color = (int(intensity*255), int(intensity*255), int(intensity*255))
             fill_triangle(image, screen_face, color)
+            # draw_triangle(image, screen_face, (color[0], 0, 0))
 
     image = image.transpose(Image.FLIP_TOP_BOTTOM)
     image.save(out_file_name)
